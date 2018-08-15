@@ -54,7 +54,7 @@ app.on('pageInit', function (page) {
 
 
   function vibration() {
-   var time = 1500;
+   var time = 500;
    navigator.vibrate(time);
   }
 

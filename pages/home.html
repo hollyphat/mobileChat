@@ -43,8 +43,9 @@
       </div>
       <div id="tab-2" class="page-content tab">
         <div class="block">
-          <p>Group Chats</p>
-          Group Chats Will be here
+          <div class="list search-list searchbar-found list media-list all-room-lists">
+
+        </div>
         </div>
       </div>
       
@@ -71,6 +72,33 @@
                 $(".user-status").html(sessionStorage.getItem("bio"));
 
                 updateStats();
+
+                var rooms = sessionStorage.getItem("room_lists");
+
+
+                var rooms_json = JSON.parse(rooms);
+
+                var students = rooms_json;
+                var htmls = "<div class='block-title'>Available Group Chats</div><ul>";
+                                            
+                for(var i = 0; i < students.length; i++){
+                    
+                    htmls += '<li>';
+                    htmls += '<a href="/chat-room/?id='+students[i].id+'&name='+students[i].name+'" class="item-link item-content">';                                
+                    htmls += '<div class="item-media students-img-li">';
+                    htmls += '<i class="icon material-icons md-only">chat</i>';
+                    htmls += '</div>';
+                    htmls += '<div class="item-inner">';
+                    htmls += '<div class="item-title">'                    
+                    htmls += students[i].name+'</div>';                    
+                    htmls += '</div></div></a></li>';
+                }
+
+                htmls += "</ul>";
+
+                //console.log(htmls);
+
+                $(".all-room-lists").html(htmls);
             }
         },
         data: function () {        
@@ -82,7 +110,8 @@
                 bio: sessionStorage.getItem("bio"),                
                 username: sessionStorage.getItem("username"),
                 requests: sessionStorage.getItem("requests"),
-                image: server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image")
+                image: server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image"),
+
             }
         },
     }

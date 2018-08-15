@@ -1,0 +1,126 @@
+<template>
+    <div class="page">        
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="left">
+                    <a href="#" class="link back">
+                        <i class="icon icon-back"></i>
+                        <span class="ios-only">Back</span>
+                    </a>
+                </div>
+                <div class="title sliding">{{$route.query.user_name}}</div>
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="block-title">{{$route.query.user_name}} Profile</div>
+            <div class="padding">
+          <div class="user-img center">
+              <img src="{{$route.query.image}}" class="img-responsive img-circle">
+          </div>
+
+          <div class="card card-outline">
+            <div class="card-header">
+                User Information
+            </div>
+            <div class="card-content card-content-padding">
+              <h5>Name</h5>
+              <p>
+                {{$route.query.user_name}}
+              </p>
+
+              <h5>Username</h5>
+              <p>
+                {{$route.query.username}}
+              </p>
+
+              <h5>Gender</h5>
+              <p>
+                {{$route.query.gender}}
+              </p>
+
+              <h5>Status</h5>
+              <p>
+                {{$route.query.bio}}
+              </p>
+            </div>
+
+            <div class="card-footer">
+              <div class="row">
+                <a href="" class="button button-outline accept-request" data-id={{$route.query.id}}>Accept Friend Request</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+</template>
+<script>
+    return {        
+        on: {
+            pageInit: function(e) {
+                var app = this.$app;
+                var $$ = this.$;                
+                var router = this.$router;        
+                var user_id = sessionStorage.getItem("user_id");
+                if((user_id === "") || (user_id === null)){
+                    
+                    mainView.router.navigate('/login/',{});
+                }
+                //accept-request
+                
+                $("body").on("click",".accept-request",function(e){
+                  e.preventDefault();                  
+                  var user = $(this).data("id");                  
+                    app.preloader.show();
+
+                    $.ajax({
+                      url: url,
+                        type: 'POST',
+                        dataType: 'json',
+                        crossDomain: true,
+                        timeout: 45000,
+                        data: {
+                            'accept-request': '',
+                            'user_id': sessionStorage.getItem("user_id"),
+                            'q': user
+                        },
+                        success: function(f){
+                          //console.log(f);
+                          app.preloader.hide();
+                          if(f.total == 0){
+                            var toasts = app.toast.create({
+                            text: 'You are already friend with this user',
+                            position: 'bottom',
+                            closeTimeout: 3000
+                            });                        
+                            toasts.open();
+                            vibration();                            
+                          }else{
+
+                            var toasts = app.toast.create({
+                            text: 'Friend request accpted successfully!',
+                            position: 'bottom',
+                            closeTimeout: 3000
+                            });                        
+                            toasts.open();
+                            vibration();
+                          }
+                          
+                        },
+                        error: function(er){
+                          console.log(er.responseText);
+                          var toasts = app.toast.create({
+                            text: 'Network error, please try again!',
+                            position: 'bottom',
+                            closeTimeout: 3000
+                        });                        
+                          toasts.open();
+                          vibration();
+                          app.preloader.hide();
+                        }
+                    });
+                });
+            }
+        },        
+    }
+</script>

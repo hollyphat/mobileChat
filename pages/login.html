@@ -113,6 +113,7 @@
                                     $("#loader").addClass('hide');
                                 }else {
                                     //console.log(f.datas);
+                                    var rooms = JSON.stringify(f.rooms);
                                     sessionStorage.setItem("user_id", f.datas['id']);
                                     sessionStorage.setItem("username", f.datas['username']);
                                     sessionStorage.setItem("name", f.datas['names']);
@@ -122,6 +123,7 @@
                                     sessionStorage.setItem("bio", f.datas['bio']);                                    
                                     sessionStorage.setItem("image", f.datas['image']);
                                     sessionStorage.setItem("requests", f.requests);
+                                    sessionStorage.setItem("room_lists",rooms)
                                     $("#signIn-btn").show();
                                     $("#loader").addClass('hide');
                                     mainView.router.navigate("/home/",{});

@@ -1,0 +1,89 @@
+<template>
+    <div class="page" data-name="chat-home">        
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="left">
+                      <a href="#" class="link icon-only panel-open" data-panel="left">
+                        <i class="icon f7-icons ios-only">menu</i>
+                        <i class="icon material-icons md-only">menu</i>
+                      </a>
+                </div>
+                <div class="title sliding">{{user_name}}</div>
+                <div class="right">
+                    <a href="/requests/" class="link">
+                        <i class="icon material-icons md-only">person<span class="badge color-red badge-request">{{requests}}</span></i>
+                    </a>                    
+                </div>
+            </div>
+        </div>
+
+        <div class="toolbar tabbar">
+        <div class="toolbar-inner">
+          <a href="#tab-1" class="tab-link tab-link-active">Chats</a>
+          <a href="#tab-2" class="tab-link">Group Chats</a>          
+        </div>
+      </div>
+        <!-- <div class="page-content">
+            <div class="block-title">Hi {{user_name}}</div>
+            <div class="padding">
+                
+
+                
+                
+            </div>
+        </div> -->
+
+        <div class="tabs-swipeable-wrap">
+    <div class="tabs">
+      <div id="tab-1" class="page-content tab tab-active">
+        <div class="block">
+          <p>Chats</p>
+          Personal Chats Will be ehere
+        </div>
+      </div>
+      <div id="tab-2" class="page-content tab">
+        <div class="block">
+          <p>Group Chats</p>
+          Group Chats Will be here
+        </div>
+      </div>
+      
+    </div>
+  </div>
+    </div>
+
+</template>
+<script>
+    return {        
+        on: {
+            pageInit: function() {
+                var app = this.$app;
+                var $$ = this.$;                
+                var router = this.$router;        
+                var user_id = sessionStorage.getItem("user_id");
+                if((user_id === "") || (user_id === null)){
+                    
+                    mainView.router.navigate("/login/",{});
+                }
+
+                $(".user-img").attr("src",server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image"));
+                $(".user-name").html(sessionStorage.getItem("username"));
+                $(".user-status").html(sessionStorage.getItem("bio"));
+
+                updateStats();
+            }
+        },
+        data: function () {        
+            return {
+                user_name: sessionStorage.getItem("name"),
+                email: sessionStorage.getItem("email"),
+                phone: sessionStorage.getItem("phone"),
+                gender: sessionStorage.getItem("gender"),
+                bio: sessionStorage.getItem("bio"),                
+                username: sessionStorage.getItem("username"),
+                requests: sessionStorage.getItem("requests"),
+                image: server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image")
+            }
+        },
+    }
+</script>

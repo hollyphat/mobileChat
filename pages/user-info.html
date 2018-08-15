@@ -1,0 +1,154 @@
+<template>
+  <div class="page" data-name="user_info">
+  <div class="navbar">
+    <div class="navbar-inner sliding">
+      <div class="left">
+        <a href="" class="link back">
+          <i class="icon icon-back"></i>
+          <span class="ios-only">Back</span>
+        </a>
+      </div>
+      <div class="title">{{$route.query.names}}</div>
+      
+    </div>
+  </div>
+  <div class="page-content">    
+      
+      <div class="block-title">{{$route.query.username}}</div>
+        
+        <div class="padding">
+          <div class="user-img center">
+              <img src="{{$route.query.image}}" class="img-responsive img-circle">
+          </div>
+
+          <div class="card card-outline">
+            <div class="card-header">
+                User Information
+            </div>
+            <div class="card-content card-content-padding">
+              <h5>Name</h5>
+              <p>
+                {{$route.query.names}}
+              </p>
+
+              <h5>Username</h5>
+              <p>
+                {{$route.query.username}}
+              </p>
+
+              <h5>Gender</h5>
+              <p>
+                {{$route.query.gender}}
+              </p>
+            </div>
+
+            <div class="card-footer">
+              <div class="row">
+                <a href="" class="button button-outline send-request" data-id={{$route.query.id}}>Send Friend Request</a>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+    </div>
+  <!-- </div> -->
+</div>
+</template>
+
+<script>
+    return {        
+        on: {
+            pageInit: function() {
+                var app = this.$app;
+                var $$ = this.$;                
+                var router = this.$router;        
+                var user_id = sessionStorage.getItem("user_id");
+                if((user_id === "") || (user_id === null)){
+                    
+                    mainView.router.navigate('/login/');
+                }
+
+                //FIND FRIENDS
+                $("body").on("click",".send-request",function(e){
+                  e.preventDefault();                  
+                  var user = $(this).data("id");                  
+                    app.preloader.show();
+
+                    $.ajax({
+                      url: url,
+                        type: 'POST',
+                        dataType: 'json',
+                        crossDomain: true,
+                        timeout: 45000,
+                        data: {
+                            'send-request': '',
+                            'user_id': sessionStorage.getItem("user_id"),
+                            'q': user
+                        },
+                        success: function(f){
+                          //console.log(f);
+                          app.preloader.hide();
+                          if(f.total == 0){
+                            var toasts = app.toast.create({
+                            text: 'You are already friend with this user',
+                            position: 'bottom',
+                            closeTimeout: 3000
+                            });                        
+                            toasts.open();
+                            vibration();                            
+                          }else{
+
+                            var toasts = app.toast.create({
+                            text: 'Friend request sent successfully!',
+                            position: 'bottom',
+                            closeTimeout: 3000
+                            });                        
+                            toasts.open();
+                            vibration();
+                          }
+                          
+                        },
+                        error: function(er){
+                          console.log(er.responseText);
+                          var toasts = app.toast.create({
+                            text: 'Network error, please try again!',
+                            position: 'bottom',
+                            closeTimeout: 3000
+                        });                        
+                          toasts.open();
+                          vibration();
+                          app.preloader.hide();
+                        }
+                    });
+                });
+
+                /*$(".user-img").attr("src",server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image"));
+                $(".user-name").html(sessionStorage.getItem("username"));
+                $(".user-status").html(sessionStorage.getItem("bio"));*/
+            }
+        },
+        data: function () {               
+     
+            return {                
+                user_name: sessionStorage.getItem("name"),
+                email: sessionStorage.getItem("email"),
+                phone: sessionStorage.getItem("phone"),
+                gender: sessionStorage.getItem("gender"),
+                bio: sessionStorage.getItem("bio"),                
+                username: sessionStorage.getItem("username"),
+                image: server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image")
+            }
+        },
+
+        methods: {
+        setColorTheme: function (color) {          
+          var self = this;
+          var app = self.$app;
+          localStorage.setItem("color_scheme",color);
+          updateColor();          
+        },
+      }
+        
+    }
+</script>

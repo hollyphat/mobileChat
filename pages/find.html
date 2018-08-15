@@ -1,0 +1,167 @@
+<template>
+  <div class="page" data-name="find_friends">
+  <div class="navbar">
+    <div class="navbar-inner sliding">
+      <div class="left">
+        <a href="" class="link back">
+          <i class="icon icon-back"></i>
+          <span class="ios-only">Back</span>
+        </a>
+      </div>
+      <div class="title">Find Friends</div>
+      <div class="right">
+        <a href="#" class="link find-friends">
+              <i class="icon material-icons md-only">check</i>
+          </a>
+      </div>
+    </div>
+  </div>
+  <div class="page-content">    
+      
+      <div class="block-title">Search Friends</div>
+        <div class="blocks">
+          <p class="padding">
+            Enter friend username or phone number!
+          </p>
+            <div class="list">
+                <ul>
+                    <li class="item-content item-input item-input-with-value">                        
+                        <div class="item-inner">
+                            <div class="item-title item-label">Username / Phone</div>
+                            <div class="item-input-wrap">
+                                <input type="text" required validate placeholder="Username / Phone" id="user-id" class="input-with-value">                                
+                            </div>
+                        </div>
+                    </li>                            
+                </ul>
+            </div>
+
+            <div class="output hide">
+            <div class="block-title">Search Result</div>
+              <div class="list search-res">
+                
+              </div>
+        </div>
+    </div>
+  <!-- </div> -->
+</div>
+</template>
+
+<script>
+    return {        
+        on: {
+            pageInit: function() {
+                var app = this.$app;
+                var $$ = this.$;                
+                var router = this.$router;        
+                var user_id = sessionStorage.getItem("user_id");
+                if((user_id === "") || (user_id === null)){
+                    
+                    mainView.router.navigate('/login/');
+                }
+
+                //FIND FRIENDS
+                $("body").on("click",".find-friends",function(e){
+                  e.preventDefault();                  
+                  var user = $("#user-id").val();
+
+                  if(user == ""){
+                    var toasts = app.toast.create({
+                        text: 'Kindly enter username or phone number',
+                        position: 'bottom',
+                        closeTimeout: 3000
+                    });                        
+                      toasts.open();
+                      vibration();
+                      return;
+                    }
+                    $(".output").addClass("hide");
+
+                    app.preloader.show();
+
+                    $.ajax({
+                      url: url,
+                        type: 'GET',
+                        dataType: 'json',
+                        crossDomain: true,
+                        timeout: 45000,
+                        data: {
+                            'search': '',
+                            'user_id': sessionStorage.getItem("user_id"),
+                            'q': user
+                        },
+                        success: function(f){
+                          //console.log(f);
+                          app.preloader.hide();
+                          if(f.total == 0){
+                            var toasts = app.toast.create({
+                            text: 'No user found!',
+                            position: 'bottom',
+                            closeTimeout: 3000
+                        });                        
+                          toasts.open();
+                          vibration();
+                          return;
+                          }
+                          var ff = f.friends;
+                          var img_url = server_upload_url+""+app_path+"users/thumb/"+ff.image;
+                          var username = ff.username;
+                          var names = ff.names;
+                          var id = ff.id;
+
+                          var html = '<ul><li><a href="/user-info/?image='+img_url+'&username='+username+'&names='+names+'&gender='+ff.gender+'&id='+id+'" class="item-link item-content">';
+                          html += '<div class="item-media">';
+                          html += '<img src="'+img_url+'" class="lazy img-responsive img-circle search-img" width="64">';
+                          html += '</div><div class="item-inner"><div class="item-title">';
+                          html += '<div class="item-header">'+ff.username+'</div>';
+                          html += ff.names;
+                          html += '<div class="item-footer">'+ff.gender+'</div>';
+                          html += '</div><div class="item-after">View</div></div></a></li></ul>';
+
+                          $(".search-res").html(html);
+                          $(".output").removeClass("hide");
+                          
+                        },
+                        error: function(er){
+                          //console.log(er.responseText);
+                          var toasts = app.toast.create({
+                            text: 'Network error, please try again!',
+                            position: 'bottom',
+                            closeTimeout: 3000
+                        });                        
+                          toasts.open();
+                          vibration();
+                          app.preloader.hide();
+                        }
+                    });
+                });
+
+                /*$(".user-img").attr("src",server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image"));
+                $(".user-name").html(sessionStorage.getItem("username"));
+                $(".user-status").html(sessionStorage.getItem("bio"));*/
+            }
+        },
+        data: function () {               
+     
+            return {                
+                user_name: sessionStorage.getItem("name"),
+                email: sessionStorage.getItem("email"),
+                phone: sessionStorage.getItem("phone"),
+                gender: sessionStorage.getItem("gender"),
+                bio: sessionStorage.getItem("bio"),                
+                username: sessionStorage.getItem("username"),
+                image: server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image")
+            }
+        },
+
+        methods: {
+        setColorTheme: function (color) {          
+          var self = this;
+          var app = self.$app;
+          localStorage.setItem("color_scheme",color);
+          updateColor();          
+        },
+      }
+        
+    }
+</script>

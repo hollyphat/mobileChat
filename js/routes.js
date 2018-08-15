@@ -26,6 +26,9 @@ var routes=[ // Index page
       path: '/find-friends/', componentUrl: './pages/find.html', name: 'find_friends',
   },
   {
+      path: '/friends/', componentUrl: './pages/friends.html', name: 'friends',
+  },
+  {
       path: '/user-info/', componentUrl: './pages/user-info.html', name: 'user_info',
   }
   ,
@@ -37,11 +40,11 @@ var routes=[ // Index page
   }
   ,
   {
-      path: '/submit-post/', componentUrl: './pages/new_post.html', name: 'submit_post',
+      path: '/chat/', componentUrl: './pages/chat.html', name: 'chat',
   }
   ,
   {
-      path: '/year-book/', componentUrl: './pages/yearbook.html', name: 'yearbook',
+      path: '/chat-room/', componentUrl: './pages/chat-room.html', name: 'chat-room',
   }
   
   , // Default route (404 page). MUST BE THE LAST

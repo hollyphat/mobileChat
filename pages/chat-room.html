@@ -71,15 +71,31 @@
                 });
 
 
-                $('#but_take').click(function(){
-                    navigator.camera.getPicture(onSuccess, onFail, { quality: 20,
+                /*$('#but_take').click(function(){
+                    
+                });*/
+
+                // Select from gallery 
+                /*$("#but_select").click(function(){
+                    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+                        sourceType: Camera.PictureSourceType.PHOTOLIBRARY, 
+                        allowEdit: true,
+                        destinationType: Camera.DestinationType.FILE_URI
+                    });
+                });*/
+
+                $("#but_take").on("click",function(){
+                  alert("but_take clicked...");
+                  //return;
+                  navigator.camera.getPicture(onSuccess, onFail, { quality: 20,
                     destinationType: Camera.DestinationType.FILE_URL 
                     });
                 });
 
-                // Select from gallery 
-                $("#but_select").click(function(){
-                    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+                $("#but_select").on("click",function(){
+                  alert("but_select clicked...");
+                  //return;
+                  navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
                         sourceType: Camera.PictureSourceType.PHOTOLIBRARY, 
                         allowEdit: true,
                         destinationType: Camera.DestinationType.FILE_URI

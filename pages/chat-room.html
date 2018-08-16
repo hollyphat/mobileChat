@@ -11,10 +11,10 @@
       <div class="title">{{$route.query.name}} - Group</div>
     </div>
   </div>
-  <div class="toolbar messagebar" @messagebar:attachmentdelete="deleteAttachment">
+  <div class="toolbar messagebar">
       <div class="toolbar-inner">
         <a class="link icon-only" @click="sheetToggle">          
-          <i class="icon material-icons md-only">menu</i>
+          <i class="icon material-icons md-only">more_vert</i>
         </a>
         <div class="messagebar-area">
           <textarea class="resizable" placeholder="Message"></textarea>
@@ -23,17 +23,24 @@
           <i class="icon material-icons md-only">send</i>
         </a>
       </div>
-      <div class="messagebar-sheet">
-        {{#each images}}
-        <label class="checkbox messagebar-sheet-image" style="background-image:url({{this}})" @change="handleAttachment">
-          <input type="checkbox">
-          <i class="icon icon-checkbox"></i>
-        </label>
-        {{/each}}
+      <div class="messagebar-sheet" style="height: auto;">
+        
+
+          <!-- display button to upload image or choose from file-->
+
+          <div class="block" style="width: 100%;">
+            <h3 style="color: #000;">Upload Image</h3>
+            <div class="row">
+            <a href="" class="col-50 button button-outline button-fill" id="but_take">Camera</a>
+            <a href="" class="col-50 button button-outline button-fill" id="but_select">File</a>
+          </div>
+          </div>
+
+
       </div>
     </div>
   <div class="page-content">
-    
+    <img src="img/icon.png" id='img' style="width: 100px; height: 100px;">
   </div>
 </div>
 </template>
@@ -46,7 +53,7 @@
 <script>
     return {        
         on: {
-            pageInit: function() {
+            pageInit: function(e, page) {
                 var app = this.$app;
                 var $$ = this.$;                
                 var router = this.$router;        
@@ -55,6 +62,63 @@
                     
                     mainView.router.navigate('/login/',{});
                 }
+
+                var self = this;
+                var app = self.$app;
+                self.messagebar = app.messagebar.create({
+                  el: page.$el.find('.messagebar'),
+                  attachments: []
+                });
+
+
+                $('#but_take').click(function(){
+                    navigator.camera.getPicture(onSuccess, onFail, { quality: 20,
+                    destinationType: Camera.DestinationType.FILE_URL 
+                    });
+                });
+
+                // Select from gallery 
+                $("#but_select").click(function(){
+                    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+                        sourceType: Camera.PictureSourceType.PHOTOLIBRARY, 
+                        allowEdit: true,
+                        destinationType: Camera.DestinationType.FILE_URI
+                    });
+                });
+
+                // Change image source
+                function onSuccess(imageData) {
+                    var image = document.getElementById('img');
+                    image.src = imageData + '?' + Math.random();;
+                }
+
+                function onFail(message) {
+                    alert('Failed because: ' + message);
+                }
+
+
+                /*var self = this;
+                
+                if (!self.notificationFull) {
+                  self.notificationFull = self.$app.notification.create({
+                    icon: '<i class="icon material-icons md-only">email</i>',
+                    title: 'Mobile Chat',
+                    titleRightText: 'now',
+                    subtitle: '2 New Request',
+                    text: '2 New Friend Request by Now!',
+                    closeTimeout: 3000,
+                  });
+                }
+                
+                self.notificationFull.open();
+
+                */
+
+
+
+                /*$.ajax({
+                  url: url
+                });*/
 
                 /*$(".user-img").attr("src",server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image"));
                 $(".user-name").html(sessionStorage.getItem("username"));
@@ -66,12 +130,11 @@
         },
 
         methods: {
-        setColorTheme: function (color) {          
-          var self = this;
-          var app = self.$app;
-          localStorage.setItem("color_scheme",color);
-          updateColor();          
-        },
+          sheetToggle: function () {
+            var self = this;
+            self.messagebar.sheetToggle();
+          }
+        
       }
         
     }

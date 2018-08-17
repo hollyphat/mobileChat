@@ -65,18 +65,7 @@
                     if (user_id != "") {
                         mainView.router.navigate("/home/",{});
                     }
-
-                    document.addEventListener("backbutton", onBackKeyDown, false);
-
-                        function onBackKeyDown() {
-                            /*app.dialog.confirm('Are you sure you want exit?', function () {
-                                //window.plugins.appMinimize.minimize();
-                                cordova.plugins.exit();
-                            });*/
-                            window.location = "index.html";
-                            // Handle the back button
-                            
-                        }
+                    
     
                     $("body").on("click",".btn-login",function (e) {
                         e.preventDefault();

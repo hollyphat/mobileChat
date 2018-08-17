@@ -217,6 +217,42 @@
                     //console.log($$("#up-btn"));
                     //alert("Hello");
 
+                    var manualUploader = new qq.FineUploader({
+                    element: document.getElementById('fine-uploader-manual-trigger'),
+                    template: 'qq-template-manual-trigger',
+                    request: {
+                        endpoint: server_upload_url + 'upload.php',
+                        params: {
+                            'project': 'mobileChat',
+                            'folder': 'users'
+                        }
+                    },
+                    thumbnails: {
+                        placeholders: {
+                            waitingPath: 'lib/upload/waiting-generic.png',
+                            notAvailablePath: 'lib/upload/not_available-generic.png'
+                        }
+                    },
+                    validation: {
+                        allowedExtensions: ['jpeg', 'jpg', 'png'],
+                        itemLimit: 1,
+                        sizeLimit: 2097152 // 50 kB = 50 * 1024 bytes
+                    },
+                    autoUpload: true,
+                    debug: false,
+                    callbacks: {
+                        onComplete: function(id, name, responseJSON, xhr) {
+                            var image_name = (responseJSON.image_name);
+                            $("[name=images]").val(image_name);
+                            //console.log(responseJSON);
+                            //manualUploader.reset();
+                        }
+                    }
+                });
+
+                qq(document.getElementById("trigger-upload")).attach("click", function() {
+                    manualUploader.uploadStoredFiles();
+                });
                     var image_name = $("#reg-image").val();
 
                     //var self = this;
@@ -292,6 +328,8 @@
                                 //$(".qq-upload-list-selector").html('');
                                 $("#reg-image").val("");
 
+                                manualUploader.reset();
+
                                 var t = app.toast.create({
                                 text: f.msg,
                                 position: 'bottom',
@@ -324,42 +362,7 @@
 
                 });
 
-                var manualUploader = new qq.FineUploader({
-                    element: document.getElementById('fine-uploader-manual-trigger'),
-                    template: 'qq-template-manual-trigger',
-                    request: {
-                        endpoint: server_upload_url + 'upload.php',
-                        params: {
-                            'project': 'mobileChat',
-                            'folder': 'users'
-                        }
-                    },
-                    thumbnails: {
-                        placeholders: {
-                            waitingPath: 'lib/upload/waiting-generic.png',
-                            notAvailablePath: 'lib/upload/not_available-generic.png'
-                        }
-                    },
-                    validation: {
-                        allowedExtensions: ['jpeg', 'jpg', 'png'],
-                        itemLimit: 1,
-                        sizeLimit: 2097152 // 50 kB = 50 * 1024 bytes
-                    },
-                    autoUpload: true,
-                    debug: false,
-                    callbacks: {
-                        onComplete: function(id, name, responseJSON, xhr) {
-                            var image_name = (responseJSON.image_name);
-                            $("[name=images]").val(image_name);
-                            //console.log(responseJSON);
-                            manualUploader.reset();
-                        }
-                    }
-                });
-
-                qq(document.getElementById("trigger-upload")).attach("click", function() {
-                    manualUploader.uploadStoredFiles();
-                });
+                
             }
         },
     }

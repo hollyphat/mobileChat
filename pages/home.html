@@ -80,7 +80,8 @@
                 function onBackKeyDown() {
                     app.dialog.confirm('Are you sure you want exit?', function () {
                         //window.plugins.appMinimize.minimize();
-                        cordova.plugins.exit();
+                        //cordova.plugins.exit();
+                        navigator.app.exitApp();
                     });
                     // Handle the back button
                     

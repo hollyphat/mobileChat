@@ -69,10 +69,11 @@
                     document.addEventListener("backbutton", onBackKeyDown, false);
 
                         function onBackKeyDown() {
-                            app.dialog.confirm('Are you sure you want exit?', function () {
+                            /*app.dialog.confirm('Are you sure you want exit?', function () {
                                 //window.plugins.appMinimize.minimize();
                                 cordova.plugins.exit();
-                            });
+                            });*/
+                            window.location = "index.html";
                             // Handle the back button
                             
                         }

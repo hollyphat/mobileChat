@@ -1,57 +1,344 @@
-<template>
-  <div class="page" data-name="settings">
-  <div class="navbar">
-    <div class="navbar-inner sliding">
-      <div class="left">
-        <a href="" class="link back">
-          <i class="icon icon-back"></i>
-          <span class="ios-only">Back</span>
-        </a>
-      </div>
-      <div class="title">{{$route.query.user_name}}</div>
-    </div>
-  </div>
-  <div class="page-content">
-    
-  </div>
-</div>
-</template>
-<style scoped>
-  .button {
-    margin-bottom: 1em;
-    text-transform: capitalize;
-  }
-</style>
-<script>
-    return {        
-        on: {
-            pageInit: function() {
-                var app = this.$app;
-                var $$ = this.$;                
-                var router = this.$router;        
-                var user_id = sessionStorage.getItem("user_id");
-                if((user_id === "") || (user_id === null)){
-                    
-                    mainView.router.navigate('/login/',{});
+<template>    
+    <div class="page" data-name="chat">        
+        <div class="navbar">
+            <div class="navbar-inner sliding">
+                <div class="left">
+                    <a href="" class="link back">
+                        <i class="icon icon-back"></i>
+                        <span class="ios-only">Back</span>
+                    </a>
+                </div>
+                <div class="title">{{$route.query.user_name}}</div>
+            </div>
+        </div>
+        <div class="toolbar messagebar">
+            <div class="toolbar-inner">
+                <a class="link icon-only" @click="sheetToggle">
+                    <i class="icon material-icons md-only">attach_file</i>
+                </a>
+                <div class="messagebar-area">
+                    <textarea class="resizable" placeholder="Message" id="msg"></textarea>
+                    <input type="hidden" name="friend_id" id="friend_id" value="{{$route.query.id}}">
+                </div>
+                <a class="link icon-only demo-send-message-link" id="sendMessage">
+                    <i class="icon material-icons md-only">send</i>
+                </a>
+            </div>
+            <div class="messagebar-sheet" style="height: auto;">
+                <!-- display button to upload image or choose from file-->
+                <div class="block" style="width: 100%;">
+                    <div id="fine-uploader-manual-trigger"></div>
+                </div>
+
+            </div>
+        </div>
+
+    <div class="page-content messages-content">
+      <script type="text/template" id="qq-template-manual-trigger">
+                <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="">
+                    <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+                        <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+                    </div>
+                    <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+                        <span class="qq-upload-drop-area-text-selector"></span>
+                    </div>
+                    <div class="buttons">                        
+                        <div class="center" align="center">
+                            <i class="qq-upload-button-selector qq-upload-button button button-fill" id="up-btns"> <i class="material-icons">attach_file</i>Attach Image</i>
+                        </div>
+
+                        <button type="button" id="trigger-upload" class="button button-raised hide">
+                            Attach
+                        </button>
+                    </div>
+                    <span class="qq-drop-processing-selector qq-drop-processing">
+                            <span>Processing dropped files...</span>
+                    <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+                    </span>
+                    <ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
+                        <li>
+                            <div class="qq-progress-bar-container-selector">
+                                <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+                            </div>
+                            <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                            <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+                            <span class="qq-upload-file-selector qq-upload-file"></span>
+                            <span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Edit filename"></span>
+                            <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                            <span class="qq-upload-size-selector qq-upload-size"></span>
+                            <button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">Cancel</button>
+                            <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Retry</button>
+                            <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Delete</button>
+                            <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                        </li>
+                    </ul>
+
+                    <dialog class="qq-alert-dialog-selector">
+                        <div class="qq-dialog-message-selector"></div>
+                        <div class="qq-dialog-buttons">
+                            <button type="button" class="qq-cancel-button-selector">Close</button>
+                        </div>
+                    </dialog>
+
+                    <dialog class="qq-confirm-dialog-selector">
+                        <div class="qq-dialog-message-selector"></div>
+                        <div class="qq-dialog-buttons">
+                            <button type="button" class="qq-cancel-button-selector">No</button>
+                            <button type="button" class="qq-ok-button-selector">Yes</button>
+                        </div>
+                    </dialog>
+
+                    <dialog class="qq-prompt-dialog-selector">
+                        <div class="qq-dialog-message-selector"></div>
+                        <input type="text">
+                        <div class="qq-dialog-buttons">
+                            <button type="button" class="button button-raised qq-cancel-button-selector">Cancel</button>
+                            <button type="button" class="button button-raised qq-ok-button-selector">Ok</button>
+                        </div>
+                    </dialog>
+                </div>
+            </script>
+            <style>
+                #trigger-upload {
+                    color: white;
+                    background-color: #00897b;
+                    font-size: 14px;
+                    padding: 7px 20px;
+                    background-image: none;
+                }
+                
+                #fine-uploader-manual-trigger .buttons {
+                    width: 100%;
+                }
+                
+                #fine-uploader-manual-trigger .qq-uploader .qq-total-progress-bar-container {
+                    width: 100%;
                 }
 
-                /*$(".user-img").attr("src",server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image"));
-                $(".user-name").html(sessionStorage.getItem("username"));
-                $(".user-status").html(sessionStorage.getItem("bio"));*/
+                .md .list ul ul {
+                    padding-left: 0;
+                }
+            </style>
+      <div class="messages" id="mlists">                        
+        
+      </div>
+    </div>
+    </div>
+</template>
+
+<script>
+  var myTimers;
+    return {
+        on: {
+            pageBeforeRemove: function (e, page) {
+              var self = this;
+              if (self.messagebar) self.messagebar.destroy();
+              clearInterval(myTimers);
+            },
+            pageInit: function(e, page) {
+                var app = this.$app;
+                var $$ = this.$;
+                var router = this.$router;
+                var user_id = sessionStorage.getItem("user_id");
+                if ((user_id === "") || (user_id === null)) {
+
+                    mainView.router.navigate('/login/', {});
+                }
+
+                var fid = $("#friend_id").val();
+                if(fid == null || fid == ""){
+                  return;
+                }
+
+                app.preloader.show();
+
+                var self = this;
+                var app = self.$app;
+                self.messagebar = app.messagebar.create({
+                    el: page.$el.find('.messagebar'),
+                    attachments: []
+                });
+
+                self.messages = app.messages.create({
+                el: page.$el.find('.messages'),
+                firstMessageRule: function (message, previousMessage, nextMessage) {
+                  if (message.isTitle) return false;
+                  if (!previousMessage || previousMessage.type !== message.type || previousMessage.name !== message.name) return true;
+                  return false;
+                },
+                lastMessageRule: function (message, previousMessage, nextMessage) {
+                  if (message.isTitle) return false;
+                  if (!nextMessage || nextMessage.type !== message.type || nextMessage.name !== message.name) return true;
+                  return false;
+                },
+                tailMessageRule: function (message, previousMessage, nextMessage) {
+                  if (message.isTitle) return false;
+                  if (!nextMessage || nextMessage.type !== message.type || nextMessage.name !== message.name) return true;
+                  return false;
+                }
+              });
+
+                const rid = $("#friend_id").val();
+
+                function doStuffs() {
+                    ///myApp.alert("run your code here when time interval is reached");
+                    load_msgs(rid);
+                }
+                myTimers = setInterval(doStuffs, 5000);
+
+
+
+
+                function load_msgs(friend_id){
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        dataType: 'json',
+                        timeout: 30000,
+                        data: {
+                            'load_msg': '',
+                            'friend_id': friend_id,
+                            'user_id': sessionStorage.getItem("user_id")
+                        },
+                        success: function(f){
+
+                            app.preloader.hide();
+                            var t = "";
+                            var rec = f.msg;
+                            //console.log(rec);
+
+                            for(var i = 0; i < rec.length; i++){                              
+                                if(rec[i].user_id == sessionStorage.getItem("user_id")){                                    
+                                  var te = '<div class="message message-sent"><div class="message-content">';
+                                    te += '<div class="message-bubble"><div class="message-text">'+rec[i].msg+'</div>';
+                                    te += '</div><i>'+rec[i].time_sent+'</i></div></div>';
+                                    t += te;
+                                }else{
+                                  var te = '<div class="message message-received"><div class="message-content">';
+                                      te += '<div class="message-name" style="display: block !important;">'+rec[i].names+'</div>';
+                                      te += '<div class="message-bubble"><div class="message-text">'+rec[i].msg+'</div>';
+                                      te += '</div><i>'+rec[i].time_sent+'</i></div></div>';
+
+                                      t += te;
+                                }                                
+                            }
+                            //sessionStorage.setItem("last_time",f.last_time);
+
+                            $("#mlists").html(t);
+
+                            //load_msg(friend_id);
+                        },
+                        error: function(e){
+                            load_msgs(friend_id);
+                        }
+                    });
+                }
+
+
+                var manualUploader = new qq.FineUploader({
+                    element: document.getElementById('fine-uploader-manual-trigger'),
+                    template: 'qq-template-manual-trigger',
+                    request: {
+                        endpoint: server_upload_url + 'upload.php',
+                        params: {
+                            'project': 'mobileChat',
+                            'folder': 'chat'
+                        }
+                    },
+                    thumbnails: {
+                        placeholders: {
+                            waitingPath: 'lib/upload/waiting-generic.png',
+                            notAvailablePath: 'lib/upload/not_available-generic.png'
+                        }
+                    },
+                    validation: {
+                        allowedExtensions: ['jpeg', 'jpg', 'png'],
+                        itemLimit: 1,
+                        sizeLimit: 2097152 // 50 kB = 50 * 1024 bytes
+                    },
+                    autoUpload: true,
+                    debug: false,
+                    callbacks: {
+                        onComplete: function(id, name, responseJSON, xhr) {
+                            var image_name = (responseJSON.image_name);
+                            //$("[name=images]").val(image_name);
+                            //console.log(responseJSON);
+                            manualUploader.reset();
+
+                              app.dialog.prompt('Say something about the image', function (img) {
+                                //console.log(img);
+                                app.messagebar.sheetToggle();
+                                var mm =  "<img src='"+server_upload_url+""+app_path+"chat/thumb/"+image_name+"' class='img-responsive img-click lazy lazy-fade-in demo-lazy'> <br><br>"+img;
+                                $("#msg").val(mm);
+                                //console.log(mm);
+                                $("#sendMessage").click();
+                              });
+
+                        }
+                    }
+                });
+
+                qq(document.getElementById("trigger-upload")).attach("click", function() {
+                    manualUploader.uploadStoredFiles();
+                });
+
+
+              $("#sendMessage").on("click", function(e){
+                  //e.preventDefault();
+
+                  var msg = $("#msg").val();
+                    if(msg == ""){
+                        app.toast.create({
+                            text: 'Kindly enter a message',
+                            position: 'center',
+                            closeTimeout: 3000
+                        }).open();                        
+                        //self.toastIcon.open();
+                        vibration();
+                        return false;
+                    }
+
+
+                      $.ajax({
+                          url: url,
+                          type: 'POST',
+                          timeout: 30000,
+                          data: {
+                              'save_chat_message': '',
+                              'user_id': sessionStorage.getItem("user_id"),
+                              'friend_id': $("#friend_id").val(),
+                              'msg': msg
+                          },
+                          success: function(f){
+                              sessionStorage.setItem("last_id",f);
+                              load_msgs($("#friend_id").val());
+                              $("#msg").val('');                              
+                          },
+                          error: function(er){
+                              app.toast.create({
+                                  text: 'Message not sent, network error...',
+                                  position: 'center',
+                                  closeTimeout: 3000
+                              }).open(); 
+                          }
+                      });
+                      });                       
             }
         },
-        data: function () {   
-            
+        data: function() {
+
         },
 
         methods: {
-        setColorTheme: function (color) {          
-          var self = this;
-          var app = self.$app;
-          localStorage.setItem("color_scheme",color);
-          updateColor();          
-        },
-      }
-        
+            sheetToggle: function() {
+                var self = this;
+                self.messagebar.sheetToggle();
+            },
+            sendMessage: function(){
+                
+            },
+
+        }
+
     }
 </script>

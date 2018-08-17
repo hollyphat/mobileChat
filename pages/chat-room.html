@@ -1,157 +1,343 @@
-<template>
-  <div class="page" data-name="settings">
-  <div class="navbar">
-    <div class="navbar-inner sliding">
-      <div class="left">
-        <a href="" class="link back">
-          <i class="icon icon-back"></i>
-          <span class="ios-only">Back</span>
-        </a>
-      </div>
-      <div class="title">{{$route.query.name}} - Group</div>
-    </div>
-  </div>
-  <div class="toolbar messagebar">
-      <div class="toolbar-inner">
-        <a class="link icon-only" @click="sheetToggle">          
-          <i class="icon material-icons md-only">more_vert</i>
-        </a>
-        <div class="messagebar-area">
-          <textarea class="resizable" placeholder="Message"></textarea>
+<template>    
+    <div class="page" data-name="chat-room">        
+        <div class="navbar">
+            <div class="navbar-inner sliding">
+                <div class="left">
+                    <a href="" class="link back">
+                        <i class="icon icon-back"></i>
+                        <span class="ios-only">Back</span>
+                    </a>
+                </div>
+                <div class="title">{{$route.query.name}} - Group</div>
+            </div>
         </div>
-        <a class="link icon-only demo-send-message-link" @click="sendMessage">          
-          <i class="icon material-icons md-only">send</i>
-        </a>
-      </div>
-      <div class="messagebar-sheet" style="height: auto;">
+        <div class="toolbar messagebar">
+            <div class="toolbar-inner">
+                <a class="link icon-only" @click="sheetToggle">
+                    <i class="icon material-icons md-only">attach_file</i>
+                </a>                
+                <div class="messagebar-area">
+                    <textarea class="resizable" placeholder="Message" id="msg"></textarea>
+                    <input type="hidden" name="room_id" id="room_id" value="{{$route.query.id}}">
+                </div>
+                <a class="link icon-only demo-send-message-link" id="sendMessage">
+                    <i class="icon material-icons md-only">send</i>
+                </a>
+            </div>
+            <div class="messagebar-sheet" style="height: auto;">
+                <!-- display button to upload image or choose from file-->
+                <div class="block" style="width: 100%;">                    
+                    <div id="fine-uploader-manual-trigger"></div>
+                </div>
+
+            </div>
+        </div>
+
+    <div class="page-content messages-content">
+      <script type="text/template" id="qq-template-manual-trigger">
+                <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="">
+                    <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+                        <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+                    </div>
+                    <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+                        <span class="qq-upload-drop-area-text-selector"></span>
+                    </div>
+                    <div class="buttons">                        
+                        <div class="center" align="center">
+                            <i class="qq-upload-button-selector qq-upload-button button button-fill" id="up-btns"> <i class="material-icons">attach_file</i>Attach Image</i>
+                        </div>
+
+                        <button type="button" id="trigger-upload" class="button button-raised hide">
+                            Attach
+                        </button>
+                    </div>
+                    <span class="qq-drop-processing-selector qq-drop-processing">
+                            <span>Processing dropped files...</span>
+                    <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+                    </span>
+                    <ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
+                        <li>
+                            <div class="qq-progress-bar-container-selector">
+                                <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
+                            </div>
+                            <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                            <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
+                            <span class="qq-upload-file-selector qq-upload-file"></span>
+                            <span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Edit filename"></span>
+                            <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                            <span class="qq-upload-size-selector qq-upload-size"></span>
+                            <button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">Cancel</button>
+                            <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Retry</button>
+                            <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Delete</button>
+                            <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                        </li>
+                    </ul>
+
+                    <dialog class="qq-alert-dialog-selector">
+                        <div class="qq-dialog-message-selector"></div>
+                        <div class="qq-dialog-buttons">
+                            <button type="button" class="qq-cancel-button-selector">Close</button>
+                        </div>
+                    </dialog>
+
+                    <dialog class="qq-confirm-dialog-selector">
+                        <div class="qq-dialog-message-selector"></div>
+                        <div class="qq-dialog-buttons">
+                            <button type="button" class="qq-cancel-button-selector">No</button>
+                            <button type="button" class="qq-ok-button-selector">Yes</button>
+                        </div>
+                    </dialog>
+
+                    <dialog class="qq-prompt-dialog-selector">
+                        <div class="qq-dialog-message-selector"></div>
+                        <input type="text">
+                        <div class="qq-dialog-buttons">
+                            <button type="button" class="button button-raised qq-cancel-button-selector">Cancel</button>
+                            <button type="button" class="button button-raised qq-ok-button-selector">Ok</button>
+                        </div>
+                    </dialog>
+                </div>
+            </script>
+            <style>
+                #trigger-upload {
+                    color: white;
+                    background-color: #00897b;
+                    font-size: 14px;
+                    padding: 7px 20px;
+                    background-image: none;
+                }
+                
+                #fine-uploader-manual-trigger .buttons {
+                    width: 100%;
+                }
+                
+                #fine-uploader-manual-trigger .qq-uploader .qq-total-progress-bar-container {
+                    width: 100%;
+                }
+
+                .md .list ul ul {
+                    padding-left: 0;
+                }
+            </style>
+      <div class="messages" id="mlist">                        
         
-
-          <!-- display button to upload image or choose from file-->
-
-          <div class="block" style="width: 100%;">
-            <h3 style="color: #000;">Upload Image</h3>
-            <div class="row">
-            <a href="" class="col-50 button button-outline button-fill" id="but_take">Camera</a>
-            <a href="" class="col-50 button button-outline button-fill" id="but_select">File</a>
-          </div>
-          </div>
-
-
       </div>
     </div>
-  <div class="page-content">
-    <img src="img/icon.png" id='img' style="width: 100px; height: 100px;">
-  </div>
-</div>
+    </div>
 </template>
-<style scoped>
-  .button {
-    margin-bottom: 1em;
-    text-transform: capitalize;
-  }
-</style>
+
 <script>
-    return {        
+  var myTimer;
+    return {
         on: {
+            pageBeforeRemove: function (e, page) {
+              //console.log("Bye...");
+              var self = this;
+              if (self.messagebar) self.messagebar.destroy();
+              clearInterval(myTimer);              
+            },
             pageInit: function(e, page) {
                 var app = this.$app;
-                var $$ = this.$;                
-                var router = this.$router;        
+                var $$ = this.$;
+                var router = this.$router;
                 var user_id = sessionStorage.getItem("user_id");
-                if((user_id === "") || (user_id === null)){
-                    
-                    mainView.router.navigate('/login/',{});
+                if ((user_id === "") || (user_id === null)) {
+
+                    mainView.router.navigate('/login/', {});
                 }
+
+                app.preloader.show();
 
                 var self = this;
                 var app = self.$app;
                 self.messagebar = app.messagebar.create({
-                  el: page.$el.find('.messagebar'),
-                  attachments: []
+                    el: page.$el.find('.messagebar'),
+                    attachments: []
+                });
+
+                self.messages = app.messages.create({
+                el: page.$el.find('.messages'),
+                firstMessageRule: function (message, previousMessage, nextMessage) {
+                  if (message.isTitle) return false;
+                  if (!previousMessage || previousMessage.type !== message.type || previousMessage.name !== message.name) return true;
+                  return false;
+                },
+                lastMessageRule: function (message, previousMessage, nextMessage) {
+                  if (message.isTitle) return false;
+                  if (!nextMessage || nextMessage.type !== message.type || nextMessage.name !== message.name) return true;
+                  return false;
+                },
+                tailMessageRule: function (message, previousMessage, nextMessage) {
+                  if (message.isTitle) return false;
+                  if (!nextMessage || nextMessage.type !== message.type || nextMessage.name !== message.name) return true;
+                  return false;
+                }
+              });
+
+                const rid = $("#room_id").val();
+
+                function doStuff() {
+                    ///myApp.alert("run your code here when time interval is reached");
+                    load_msg(rid);
+                }
+                myTimer = setInterval(doStuff, 5000);
+
+
+
+
+                function load_msg(room_id){
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        dataType: 'json',
+                        timeout: 30000,
+                        data: {
+                            'load_chat_msg': '',
+                            'room_id': room_id
+                        },
+                        success: function(f){
+
+                            app.preloader.hide();
+                            var t = "";
+                            var rec = f.msg;
+                            //console.log(rec);
+                            //var ld = ""
+                            for(var i = 0; i < rec.length; i++){                              
+                                if(rec[i].user_id == sessionStorage.getItem("user_id")){                                    
+                                  var te = '<div class="message message-sent"><div class="message-content">';
+                                    te += '<div class="message-bubble"><div class="message-text">'+rec[i].msg+'</div>';
+                                    te += '</div><i style="font-size:8px;">'+rec[i].time_sent+'</i></div></div>';
+                                    t += te;
+                                }else{
+                                  var te = '<div class="message message-received"><div class="message-content">';
+                                      te += '<div class="message-name" style="display: block !important;">'+rec[i].names+'</div>';
+                                      te += '<div class="message-bubble"><div class="message-text">'+rec[i].msg+'</div>';
+                                      te += '</div><i style="font-size:8px;">'+rec[i].time_sent+'</i></div></div>';
+
+                                      t += te;
+                                }                                
+                            }
+                            //sessionStorage.setItem("last_time",f.last_time);
+
+                            $("#mlist").html(t);
+
+                            //load_msg(room_id);
+                        },
+                        error: function(e){
+                          app.preloader.hide();
+                            ///load_msg(room_id);
+                        }
+                    });
+                }
+
+
+                var manualUploader = new qq.FineUploader({
+                    element: document.getElementById('fine-uploader-manual-trigger'),
+                    template: 'qq-template-manual-trigger',
+                    request: {
+                        endpoint: server_upload_url + 'upload.php',
+                        params: {
+                            'project': 'mobileChat',
+                            'folder': 'chat'
+                        }
+                    },
+                    thumbnails: {
+                        placeholders: {
+                            waitingPath: 'lib/upload/waiting-generic.png',
+                            notAvailablePath: 'lib/upload/not_available-generic.png'
+                        }
+                    },
+                    validation: {
+                        allowedExtensions: ['jpeg', 'jpg', 'png'],
+                        itemLimit: 1,
+                        sizeLimit: 2097152 // 50 kB = 50 * 1024 bytes
+                    },
+                    autoUpload: true,
+                    debug: false,
+                    callbacks: {
+                        onComplete: function(id, name, responseJSON, xhr) {
+                            var image_name = (responseJSON.image_name);
+                            //$("[name=images]").val(image_name);
+                            //console.log(responseJSON);
+                            manualUploader.reset();
+
+                              app.dialog.prompt('Say something about the image', function (img) {
+                                //console.log(img);
+                                app.messagebar.sheetToggle();
+                                var mm =  "<img src='"+server_upload_url+""+app_path+"chat/thumb/"+image_name+"' class='img-responsive img-click lazy lazy-fade-in demo-lazy'> <br><br>"+img;
+                                $("#msg").val(mm);
+                                //console.log(mm);
+                                $("#sendMessage").click();
+                              });
+
+                        }
+                    }
+                });
+
+                qq(document.getElementById("trigger-upload")).attach("click", function() {
+                    manualUploader.uploadStoredFiles();
                 });
 
 
-                /*$('#but_take').click(function(){
-                    
-                });*/
+              $("#sendMessage").on("click", function(e){
+                  //e.preventDefault();
 
-                // Select from gallery 
-                /*$("#but_select").click(function(){
-                    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
-                        sourceType: Camera.PictureSourceType.PHOTOLIBRARY, 
-                        allowEdit: true,
-                        destinationType: Camera.DestinationType.FILE_URI
-                    });
-                });*/
+                  var msg = $("#msg").val();
+                  //console.log(msg);
 
-                $("#but_take").on("click",function(){
-                  alert("but_take clicked...");
-                  //return;
-                  navigator.camera.getPicture(onSuccess, onFail, { quality: 20,
-                    destinationType: Camera.DestinationType.FILE_URL 
-                    });
-                });
-
-                $("#but_select").on("click",function(){
-                  alert("but_select clicked...");
-                  //return;
-                  navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
-                        sourceType: Camera.PictureSourceType.PHOTOLIBRARY, 
-                        allowEdit: true,
-                        destinationType: Camera.DestinationType.FILE_URI
-                    });
-                });
-
-                // Change image source
-                function onSuccess(imageData) {
-                    var image = document.getElementById('img');
-                    image.src = imageData + '?' + Math.random();;
-                }
-
-                function onFail(message) {
-                    alert('Failed because: ' + message);
-                }
+                    if(msg == ""){
+                        app.toast.create({
+                            text: 'Kindly enter a message',
+                            position: 'center',
+                            closeTimeout: 3000
+                        }).open();                        
+                        //self.toastIcon.open();
+                        vibration();
+                        return false;
+                    }
 
 
-                /*var self = this;
-                
-                if (!self.notificationFull) {
-                  self.notificationFull = self.$app.notification.create({
-                    icon: '<i class="icon material-icons md-only">email</i>',
-                    title: 'Mobile Chat',
-                    titleRightText: 'now',
-                    subtitle: '2 New Request',
-                    text: '2 New Friend Request by Now!',
-                    closeTimeout: 3000,
-                  });
-                }
-                
-                self.notificationFull.open();
-
-                */
-
-
-
-                /*$.ajax({
-                  url: url
-                });*/
-
-                /*$(".user-img").attr("src",server_upload_url+""+app_path+"users/thumb/"+sessionStorage.getItem("image"));
-                $(".user-name").html(sessionStorage.getItem("username"));
-                $(".user-status").html(sessionStorage.getItem("bio"));*/
+                      $.ajax({
+                          url: url,
+                          type: 'POST',
+                          timeout: 30000,
+                          data: {
+                              'save_group_message': '',
+                              'user_id': sessionStorage.getItem("user_id"),
+                              'room_id': $("#room_id").val(),
+                              'msg': msg
+                          },
+                          success: function(f){
+                              sessionStorage.setItem("last_id",f);
+                              load_msg($("#room_id").val());
+                              $("#msg").val('');                              
+                          },
+                          error: function(er){
+                              app.toast.create({
+                                  text: 'Message not sent, network error...',
+                                  position: 'center',
+                                  closeTimeout: 3000
+                              }).open(); 
+                          }
+                      });
+                      });                       
             }
         },
-        data: function () {   
-            
+        data: function() {
+
         },
 
         methods: {
-          sheetToggle: function () {
-            var self = this;
-            self.messagebar.sheetToggle();
-          }
-        
-      }
-        
+            sheetToggle: function() {
+                var self = this;
+                self.messagebar.sheetToggle();
+            },
+            sendMessage: function(){
+                
+            },
+
+
+        }
+
     }
 </script>

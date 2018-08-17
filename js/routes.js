@@ -44,9 +44,16 @@ var routes=[ // Index page
   }
   ,
   {
-      path: '/chat-room/', componentUrl: './pages/chat-room.html', name: 'chat-room',
+      path: '/forgot-password/', componentUrl: './pages/fp.html', name: 'forgot-password',
   }
-  
+  ,
+  {
+      path: '/profile/', componentUrl: './pages/profile.html', name: 'profile',
+  }
+  ,
+  {
+      path: '/chat-room/', componentUrl: './pages/chat-room.html', name: 'chat_room',
+  }
   , // Default route (404 page). MUST BE THE LAST
   {
       path: '(.*)', url: './pages/404.html',

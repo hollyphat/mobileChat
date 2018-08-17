@@ -127,7 +127,7 @@
                                     //console.log(f.datas);
                                     var rooms = JSON.stringify(f.rooms);
                                     var chats_lists = JSON.stringify(f.chats_lists);
-                                    console.log(chats_lists);
+                                    //console.log(chats_lists);
                                     sessionStorage.setItem("chats_lists",chats_lists);
                                     sessionStorage.setItem("user_id", f.datas['id']);
                                     sessionStorage.setItem("username", f.datas['username']);
@@ -153,7 +153,7 @@
 
                                 vibration();
                                 //console.log(e.responseText);
-                                alert(e.responseText);
+                                //alert(e.responseText);
                                 $("#signIn-btn").show();
                                 $("#loader").addClass('hide');
                             }
